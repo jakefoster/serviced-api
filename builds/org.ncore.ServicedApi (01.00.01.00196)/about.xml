@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application solution="org.ncore.sln">
+  <Title>org.ncore.ServicedApi</Title>
+  <Description>The core classes for assembling a ServicedApi.</Description>
+  <Company>Cleverbox Inc.</Company>
+  <Product>org.ncore.ServicedApi</Product>
+  <Copyright>Copyright © 2004-2014, Cleverbox Inc. - All rights reserved.</Copyright>
+  <Trademark></Trademark>
+  <Culture></Culture>
+  <Version>
+    <Label>2014 R1</Label>
+    <Major>01</Major>
+    <Minor>00</Minor>
+    <Patch>01</Patch>
+    <Build>196</Build>
+    <Printable>1.0.1.196</Printable>
+    <Sortable>01.00.01.00196</Sortable>
+  </Version>
+  <Configuration>
+    <Label>Beta</Label>
+    <Name>Debug</Name>
+  </Configuration>
+  <Build>
+    <Label>Release</Label>
+    <BuildDateTimeUtc>2014-10-24T23:17:32Z</BuildDateTimeUtc>
+    <BuildDateTimeLocal>2014-10-24T16:17:32-07:00</BuildDateTimeLocal>
+    <ShortName>org.ncore.ServicedApi 1.0.1.196 (Release) «Debug»</ShortName>
+    <FriendlyName>org.ncore.ServicedApi, version 1.0.1.196, '2014 R1' (Beta, Release) «Debug»</FriendlyName>
+  </Build>
+</Application>
