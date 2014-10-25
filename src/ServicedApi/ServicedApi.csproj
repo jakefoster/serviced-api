@@ -80,6 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="ServicedApi.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="_build\PostBuild.cmd" />
     <None Include="_build\PreBuild.cmd" />
   </ItemGroup>
