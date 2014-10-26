@@ -140,5 +140,12 @@ namespace org.ncore.ServicedApi.Container
             get { return (string)this[ "typeName" ]; }
             set { this[ "typeName" ] = value; }
         }
+
+        [ConfigurationProperty( "allowSave", DefaultValue = "false" )]
+        public bool AllowSave
+        {
+            get { return (bool)this[ "allowSave" ]; }
+            set { this[ "allowSave" ] = value; }
+        }
     }
 }

@@ -41,6 +41,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="org.ncore, Version=1.7.5.242, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ncore-foundation.1.7.5.242\lib\net452\org.ncore.dll</HintPath>
@@ -64,7 +65,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Container\InjectAttribute.cs" />
+    <Compile Include="Container\Injector.cs" />
+    <Compile Include="Container\Instance.cs" />
     <Compile Include="Container\KernelRegistry.cs" />
+    <Compile Include="Container\RegistryEntry.cs" />
+    <Compile Include="Container\Service.cs" />
     <Compile Include="ContextStorage.cs" />
     <Compile Include="Persistence\IDataContext.cs" />
     <Compile Include="Persistence\IDataSilo.cs" />

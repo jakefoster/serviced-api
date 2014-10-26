@@ -8,8 +8,8 @@
     <ProjectGuid>{CC52DFA3-DDF1-4D1F-AE6C-72710B5F34F2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>_org.ncore.unittests.ServicedApi</RootNamespace>
-    <AssemblyName>_org.ncore.unittests.ServicedApi</AssemblyName>
+    <RootNamespace>_unittests.org.ncore.ServicedApi</RootNamespace>
+    <AssemblyName>_unittests.org.ncore.ServicedApi</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -41,15 +41,34 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Container\ISampleInterfaceA.cs" />
+    <Compile Include="Container\KernelTests.cs" />
+    <Compile Include="Container\SampleClassA.cs" />
+    <Compile Include="Container\SampleClassB.cs" />
+    <Compile Include="Container\SampleClassC.cs" />
+    <Compile Include="Container\ServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Worknotes.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ServicedApi\ServicedApi.csproj">
+      <Project>{b5dcf8a2-1d41-4242-a0e6-353aa99f0e17}</Project>
+      <Name>ServicedApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

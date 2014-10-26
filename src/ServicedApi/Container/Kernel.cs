@@ -20,6 +20,12 @@ namespace org.ncore.ServicedApi.Container
             return CreateObject<T>( name, false );
         }
 
+        public static T CreateObject<T>( bool saveInRegistry )
+        {
+            string name = typeof( T ).ToString();
+            return CreateObject<T>( name, saveInRegistry );
+        }
+
         public static T CreateObject<T>( string name )
         {
             return CreateObject<T>( name, false );
@@ -27,14 +33,23 @@ namespace org.ncore.ServicedApi.Container
 
         public static T CreateObject<T>( string name, bool saveInRegistry )
         {
-            KernelConfiguration configuration = (KernelConfiguration)ConfigurationManager.GetSection( "kernel" );
-            TypeElement targetType = configuration.Types[ name ];
+            RegistryEntry targetType = Registry[ name ];
             ObjectHandle handle = Activator.CreateInstance( targetType.Assembly, targetType.TypeName );
             Object target = (T)handle.Unwrap();
             // TODO: Configure params?  JF
             if( saveInRegistry )
             {
-                Registry.Add( name, target );
+                if( !targetType.AllowSave )
+                {
+                    throw new ApplicationException( "The 'saveInRegistry' parameter was true but the underlying RegistryEntry for this type does not allow saving an instance to the registry." );
+                }
+
+                if( targetType.Instance != null )
+                {
+                    throw new ApplicationException( "The 'saveInRegistry' parameter was true but there is already an instance saved in this RegistryEntry." );
+                }
+
+                targetType.Instance = target;
             }
             return (T)target;
         }
@@ -47,15 +62,24 @@ namespace org.ncore.ServicedApi.Container
 
         public static T GetObject<T>( string name )
         {
-            Object target = Kernel.Registry[ name ];
-            return (T)target;
+            RegistryEntry target = Kernel.Registry[ name ];
+            if( target.Instance == null )
+            {
+                throw new ApplicationException( "The specified entry in the KernalRegistry does not have a saved instance." );
+            }
+            return (T)target.Instance;
         }
-
 
         public static T GetOrCreateObject<T>()
         {
             string name = typeof( T ).ToString();
             return GetOrCreateObject<T>( name, false );
+        }
+
+        public static T GetOrCreateObject<T>( bool saveInRegistry )
+        {
+            string name = typeof( T ).ToString();
+            return GetOrCreateObject<T>( name, saveInRegistry );
         }
 
         public static T GetOrCreateObject<T>( string name )
@@ -66,9 +90,9 @@ namespace org.ncore.ServicedApi.Container
         public static T GetOrCreateObject<T>( string name, bool saveInRegistry )
         {
             Object target = null;
-            if( Kernel.Registry != null && Kernel.Registry.ContainsKey( name ) )
+            if( Kernel.Registry != null && Kernel.Registry.ContainsKey( name ) && Kernel.Registry[name].Instance != null )
             {
-                target = Kernel.Registry[ name ];
+                target = Kernel.Registry[ name ].Instance;
             }
             else
             {

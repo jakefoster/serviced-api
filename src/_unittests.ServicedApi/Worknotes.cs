@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using org.ncore.ServicedApi;
+using org.ncore.ServicedApi.Container;
 
-namespace _org.ncore.unittests.ServicedApi
+namespace _unittests.org.ncore.ServicedApi
 {
     /// <summary>
     /// Summary description for UnitTest1
@@ -60,11 +64,95 @@ namespace _org.ncore.unittests.ServicedApi
         #endregion
 
         [TestMethod]
-        public void TestMethod1()
+        public void Scratchpad()
         {
-            //
-            // TODO: Add test logic	here
-            //
+            // stuff goes here...
+        }
+
+        [TestMethod]
+        public void DiIsh()
+        {
+            //Kernel.Registry.Add( "Samurai", typeof( Samurai ) );
+            //Kernel.Registry.Add( typeof( Samurai ), typeof( Samurai ) );
+
+            Injector injector = new Injector( new Dictionary<object, object>(){
+                { typeof(IWeapon), typeof(Sword) },
+                { "SpecialPower", typeof(SheerTerror) },
+                { "SecretPower", typeof(TemporaryBlindness) }
+            } );
+
+            //dynamic myInstance = Instance.New( "Samurai", injector );
+            dynamic myInstance = Instance.New( typeof( Samurai ), injector );
+            Debug.WriteLine( myInstance.UseSecretPower() );
+            Debug.WriteLine( myInstance.SpecialPower.Use() );
+            Debug.WriteLine( myInstance.Weapon.Use() );
+
+            // OR
+
+            //Samurai mySamurai = Instance.New<Samurai>( injector );
+            //Debug.WriteLine( mySamurai.UseSecretPower() );
+            //Debug.WriteLine( mySamurai.SpecialPower.Use() );
+            //Debug.WriteLine( mySamurai.Weapon.Use() );
+
+        }
+    }
+
+
+    /* Injection play */
+    public interface IWeapon
+    {
+        string Use();
+    }
+
+    public class Sword : IWeapon
+    {
+        public string Use()
+        {
+            return "Slice!";
+        }
+    }
+
+    public class Naginata : IWeapon
+    {
+        public string Use()
+        {
+            return "Stab!";
+        }
+    }
+
+    public class TemporaryBlindness
+    {
+        public string Use()
+        {
+            return "Argh! My eyes!";
+        }
+    }
+
+    public class SheerTerror
+    {
+        public string Use()
+        {
+            return "Stop! You're scaring me!";
+        }
+    }
+
+    public class Samurai
+    {
+        [Inject( "SecretPower" )]
+        private dynamic _secretPower;
+        [Inject]
+        public dynamic SpecialPower { get; private set; }
+        [Inject]
+        public IWeapon Weapon { get; private set; }
+
+        public Samurai()
+        {
+
+        }
+
+        public string UseSecretPower()
+        {
+            return _secretPower.Use();
         }
     }
 }
