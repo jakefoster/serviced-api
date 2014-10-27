@@ -33,23 +33,23 @@ namespace org.ncore.ServicedApi.Container
 
         public static T CreateObject<T>( string name, bool saveInRegistry )
         {
-            RegistryEntry targetType = Registry[ name ];
-            ObjectHandle handle = Activator.CreateInstance( targetType.Assembly, targetType.TypeName );
+            KernelType kernelType = Registry[ name ];
+            ObjectHandle handle = Activator.CreateInstance( kernelType.Assembly, kernelType.TypeName );
             Object target = (T)handle.Unwrap();
             // TODO: Configure params?  JF
             if( saveInRegistry )
             {
-                if( !targetType.AllowSave )
+                if( !kernelType.AllowSave )
                 {
                     throw new ApplicationException( "The 'saveInRegistry' parameter was true but the underlying RegistryEntry for this type does not allow saving an instance to the registry." );
                 }
 
-                if( targetType.Instance != null )
+                if( kernelType.Instance != null )
                 {
                     throw new ApplicationException( "The 'saveInRegistry' parameter was true but there is already an instance saved in this RegistryEntry." );
                 }
 
-                targetType.Instance = target;
+                kernelType.Instance = target;
             }
             return (T)target;
         }
@@ -62,7 +62,7 @@ namespace org.ncore.ServicedApi.Container
 
         public static T GetObject<T>( string name )
         {
-            RegistryEntry target = Kernel.Registry[ name ];
+            KernelType target = Kernel.Registry[ name ];
             if( target.Instance == null )
             {
                 throw new ApplicationException( "The specified entry in the KernalRegistry does not have a saved instance." );

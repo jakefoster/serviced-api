@@ -3,108 +3,156 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
+using org.ncore.Extensions;
 using org.ncore.ServicedApi;
 
 namespace org.ncore.ServicedApi.Container
 {
     public class Injector
     {
-        private Dictionary<object, object> _registry = null;
-        public Injector( Dictionary<object, object> registry )
+        public bool SearchKernel { get; set; }
+        public InjectorRegistry Registry { get; set; }
+
+        public Injector()
         {
-            _registry = registry;
+            Registry = new InjectorRegistry();
+            SearchKernel = true;
         }
 
+        public Injector(bool searchKernel)
+        {
+            Registry = new InjectorRegistry();
+            SearchKernel = searchKernel;
+        }
+
+        public Injector( InjectorRegistry registry )
+        {
+            Registry = registry;
+            SearchKernel = true;
+            _initialize();
+        }
+
+        public Injector( InjectorRegistry registry, bool searchKernel )
+        {
+            Registry = registry;
+            SearchKernel = searchKernel;
+            _initialize();
+        }
+
+        public void RefreshRegistry()
+        {
+            _initialize();
+        }
+
+        private void _initialize()
+        {
+            foreach( InjectorType injectorType in Registry.Values )
+            {
+                // NOTE: Non-obvious but the whole point is to ensure that everything 
+                //  in the InjectorRegistry has an instance.  -JF
+                if( injectorType.Instance == null )
+                {
+                    injectorType.Instance = _createInstance( injectorType );
+                }
+            }
+        }
+
+        private static object _createInstance( InjectorType injectorType )
+        {
+            ObjectHandle handle = Activator.CreateInstance( injectorType.Assembly, injectorType.TypeName );
+            Object target = handle.Unwrap();
+            return target;
+        }
+        
         public void Inject( object instance )
         {
-            MemberInfo[] properties = _getMembers( instance.GetType(), MemberTypeEnum.Property );
+            PropertyInfo[] properties = instance.GetType().GetProperties( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
-            foreach( MemberInfo property in properties )
+            foreach( PropertyInfo property in properties )
             {
+                Debug.WriteLine( "Property: " + property.Name );
                 foreach( object attribute in property.GetCustomAttributes( true ) )
                 {
+                    Debug.WriteLine( "-> Attribute: " + attribute.GetType().Name );
                     if( attribute is InjectAttribute )
                     {
-                        Debug.WriteLine( "Found: " + ( (InjectAttribute)attribute ).Name );
-                        // TODO: Set it!
+                        Debug.WriteLine( "--> Found injector attribute " + ( (InjectAttribute)attribute ).Name );
+                        
+                        string name = ( (InjectAttribute)attribute ).Name;
+
+                        if( name.IsEmptyOrNull() )
+                        {
+                            name = property.Name;
+                        }
+
+                        Debug.WriteLine( "---> Resolves to name " + name );
+
+                        object injectable = null;
+                        if( Registry.Keys.Contains(name) )
+                        {
+                            injectable = Registry[ name ].Instance;
+                            Debug.WriteLine( "---> Retrieved instance from InjectorRegistry" );
+                        }
+                        else if( SearchKernel && Kernel.Registry.Keys.Contains( name ) )
+                        {
+                            injectable = Kernel.GetOrCreateObject<object>( name );
+                            Debug.WriteLine( "---> Retrieved instance from KernelRegistry" );
+                        }
+
+                        if(injectable != null)
+                        {
+                            property.SetValue( instance, injectable );
+                            Debug.WriteLine( "---> Set value!" );
+                        }
                     }
                 }
             }
 
-            // Do the reflection thing here -> even on private fields or private setters.
-            /*
-            foreach( object attribute in member.GetCustomAttributes( true ) )
+            FieldInfo[] fields = instance.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
+
+            foreach( FieldInfo field in fields )
             {
-                if( attribute is IsTestedAttribute )
+                Debug.WriteLine( "Field: " + field.Name );
+                foreach( object attribute in field.GetCustomAttributes( true ) )
                 {
-                    return true;
+                    Debug.WriteLine( "-> Attribute: " + attribute.GetType().Name );
+                    if( attribute is InjectAttribute )
+                    {
+                        Debug.WriteLine( "--> Found injector attribute " + ( (InjectAttribute)attribute ).Name );
+
+                        string name = ( (InjectAttribute)attribute ).Name;
+
+                        if( name.IsEmptyOrNull() )
+                        {
+                            name = field.Name;
+                        }
+
+                        Debug.WriteLine( "---> Resolves to name " + name );
+
+                        object injectable = null;
+                        if( Registry.Keys.Contains( name ) )
+                        {
+                            injectable = Registry[ name ].Instance;
+                            Debug.WriteLine( "---> Retrieved instance from InjectorRegistry" );
+                        }
+                        else if( SearchKernel && Kernel.Registry.Keys.Contains( name ) )
+                        {
+                            injectable = Kernel.GetOrCreateObject<object>( name );
+                            Debug.WriteLine( "---> Retrieved instance from KernelRegistry" );
+                        }
+
+                        if( injectable != null )
+                        {
+                            field.SetValue( instance, injectable );
+                            Debug.WriteLine( "---> Set value!" );
+                        }
+                    }
                 }
             }
-            return false;
-            */
-        }
-
-        public enum MemberTypeEnum
-        {
-            Field,
-            Property
-        }
-
-        private static MemberInfo[] _getMembers( Type type, MemberTypeEnum memberType )
-        {
-            MemberInfo[] members;
-            if( memberType == MemberTypeEnum.Field )
-            {
-                members = type.GetFields( BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy );
-            }
-            else
-            {
-                members = type.GetProperties( BindingFlags.Public | BindingFlags.Instance );
-            }
-            return members;
-        }
-
-        private static MemberInfo _getMember( Type type, MemberInfo member, MemberTypeEnum memberType )
-        {
-            MemberInfo instanceMember;
-            if( memberType == MemberTypeEnum.Field )
-            {
-                instanceMember = type.GetField( member.Name, BindingFlags.NonPublic | BindingFlags.Instance );
-            }
-            else
-            {
-                instanceMember = type.GetProperty( member.Name );
-            }
-            return instanceMember;
-        }
-
-        private static MemberInfo _getMemberFromBase( Type baseType, string memberName, MemberTypeEnum memberType )
-        {
-            MemberInfo member;
-            if( memberType == MemberTypeEnum.Field )
-            {
-                member = baseType.GetField( memberName, BindingFlags.NonPublic | BindingFlags.Instance );
-            }
-            else
-            {
-                member = baseType.GetProperty( memberName );
-            }
-
-            if( member == null )
-            {
-                if( baseType == typeof( System.Object ) )
-                {
-                    return null;
-                }
-                else
-                {
-                    member = _getMemberFromBase( baseType.BaseType, memberName, memberType );
-                }
-            }
-            return member;
         }
     }
 }

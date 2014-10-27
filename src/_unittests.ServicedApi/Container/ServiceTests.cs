@@ -68,7 +68,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         {
             // REGISTER OUR TYPE
             Kernel.Registry.Reset();
-            Kernel.Registry.Add( new RegistryEntry( "MyService", typeof( MockSampleClassC ) ) );
+            Kernel.Registry.Add( new KernelType( "MyService", typeof( MockSampleClassC ) ) );
 
             dynamic myService = new Service( "MyService" );
             string greeting = myService.Greet( "Hello" );
@@ -97,7 +97,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         {
             // REGISTER OUR TYPE
             Kernel.Registry.Reset();
-            Kernel.Registry.Add( new RegistryEntry( typeof( SampleClassC ), typeof( MockSampleClassC ) ) );
+            Kernel.Registry.Add( new KernelType( typeof( SampleClassC ), typeof( MockSampleClassC ) ) );
 
             // HMM. Something is confusing here. Are we trying to fully use the kernel registry or not?
             dynamic myService = new Service( typeof( SampleClassC ) );

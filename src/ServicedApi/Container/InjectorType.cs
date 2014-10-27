@@ -6,33 +6,30 @@ using System.Threading.Tasks;
 
 namespace org.ncore.ServicedApi.Container
 {
-    public class RegistryEntry
+    public class InjectorType
     {
         public string Name { get; set; }
         public string Assembly { get; set; }
         public string TypeName { get; set; }
-        public bool AllowSave { get; set; }
         public object Instance { get; set; }
 
-        public RegistryEntry(){}
+        public InjectorType(){}
 
-        public RegistryEntry( string name, Type type )
+        public InjectorType( string name, Type type )
         {
             this.Name = name;
             this.Assembly = type.Assembly.FullName;
             this.TypeName = type.FullName;
-            this.AllowSave = false;
         }
 
-        public RegistryEntry( Type name, Type type )
+        public InjectorType( Type name, Type type )
         {
             this.Name = name.FullName;
             this.Assembly = type.Assembly.FullName;
             this.TypeName = type.FullName;
-            this.AllowSave = false;
         }
 
-        public RegistryEntry( object instance )
+        public InjectorType( object instance )
         {
             _validateInstance( instance );
 
@@ -41,11 +38,10 @@ namespace org.ncore.ServicedApi.Container
             this.Name = type.FullName;
             this.Assembly = type.Assembly.FullName;
             this.TypeName = type.FullName;
-            this.AllowSave = true;
             this.Instance = instance;
         }
 
-        public RegistryEntry(string name, object instance)
+        public InjectorType(string name, object instance)
         {
             _validateInstance( instance );
 
@@ -54,18 +50,16 @@ namespace org.ncore.ServicedApi.Container
             this.Name = name;
             this.Assembly = type.Assembly.FullName;
             this.TypeName = type.FullName;
-            this.AllowSave = true;
             this.Instance = instance;
         }
 
-        public RegistryEntry( Type type, object instance )
+        public InjectorType( Type type, object instance )
         {
             _validateInstance( instance );
 
             this.Name = type.FullName;
             this.Assembly = type.Assembly.FullName;
             this.TypeName = type.FullName;
-            this.AllowSave = true;
             this.Instance = instance;
         }
 

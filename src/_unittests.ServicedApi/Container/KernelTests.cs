@@ -156,7 +156,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         [TestMethod]
         public void AddRegistryEntry_string_name_then_CreateObject_works()
         {
-            Kernel.Registry.Add( new RegistryEntry("AnotherArbitraryName", typeof(SampleClassB) ));
+            Kernel.Registry.Add( new KernelType("AnotherArbitraryName", typeof(SampleClassB) ));
 
             ISampleInterfaceA sampleB = Kernel.GetOrCreateObject<ISampleInterfaceA>( "AnotherArbitraryName" );
 
@@ -170,7 +170,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         [TestMethod]
         public void AddRegistryEntry_type_name_then_CreateObject_works()
         {
-            Kernel.Registry.Add( new RegistryEntry( typeof( SampleClassB ), typeof( SampleClassB ) ) );
+            Kernel.Registry.Add( new KernelType( typeof( SampleClassB ), typeof( SampleClassB ) ) );
 
             SampleClassB sampleB = Kernel.GetOrCreateObject<SampleClassB>();
 
@@ -186,7 +186,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         {
             SampleClassB instance = new SampleClassB();
 
-            Kernel.Registry.Add( new RegistryEntry( instance ) );
+            Kernel.Registry.Add( new KernelType( instance ) );
 
             SampleClassB sampleB = Kernel.GetObject<SampleClassB>();
 
@@ -202,7 +202,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         {
             SampleClassB instance = new SampleClassB();
 
-            Kernel.Registry.Add( new RegistryEntry( "AnotherArbitraryName", instance ) );
+            Kernel.Registry.Add( new KernelType( "AnotherArbitraryName", instance ) );
 
             SampleClassB sampleB = Kernel.GetObject<SampleClassB>( "AnotherArbitraryName" );
 
@@ -218,7 +218,7 @@ namespace _unittests.org.ncore.ServicedApi.Container
         {
             SampleClassB instance = new SampleClassB();
 
-            Kernel.Registry.Add( new RegistryEntry( typeof(SampleClassB), instance ) );
+            Kernel.Registry.Add( new KernelType( typeof(SampleClassB), instance ) );
 
             SampleClassB sampleB = Kernel.GetObject<SampleClassB>();
 

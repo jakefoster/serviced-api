@@ -75,25 +75,99 @@ namespace _unittests.org.ncore.ServicedApi
             //Kernel.Registry.Add( "Samurai", typeof( Samurai ) );
             //Kernel.Registry.Add( typeof( Samurai ), typeof( Samurai ) );
 
-            Injector injector = new Injector( new Dictionary<object, object>(){
-                { typeof(IWeapon), typeof(Sword) },
-                { "SpecialPower", typeof(SheerTerror) },
-                { "SecretPower", typeof(TemporaryBlindness) }
+            Kernel.Registry.Reset();
+
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( "Weapon", typeof(Sword) )
             } );
 
+            /*
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( typeof(IWeapon), typeof(Sword) ),
+                new InjectorType( "SpecialPower", typeof(SheerTerror) ),
+                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
+            } );
+            */
+
+            /*
             //dynamic myInstance = Instance.New( "Samurai", injector );
             dynamic myInstance = Instance.New( typeof( Samurai ), injector );
-            Debug.WriteLine( myInstance.UseSecretPower() );
-            Debug.WriteLine( myInstance.SpecialPower.Use() );
-            Debug.WriteLine( myInstance.Weapon.Use() );
+            //Debug.WriteLine( myInstance.UseSecretPower() );
+            //Debug.WriteLine( myInstance.SpecialPower.Use() );
+            string weapon_use = myInstance.Weapon.Use();
+            Debug.WriteLine( weapon_use );
+            */
 
             // OR
 
-            //Samurai mySamurai = Instance.New<Samurai>( injector );
+            Samurai mySamurai = Instance.New<Samurai>( injector );
             //Debug.WriteLine( mySamurai.UseSecretPower() );
             //Debug.WriteLine( mySamurai.SpecialPower.Use() );
-            //Debug.WriteLine( mySamurai.Weapon.Use() );
+            Debug.WriteLine( mySamurai.Weapon.Use() );
+        }
 
+        [TestMethod]
+        public void Works_Expository()
+        {
+            //Kernel.Registry.Add( "Samurai", typeof( Samurai ) );
+            //Kernel.Registry.Add( typeof( Samurai ), typeof( Samurai ) );
+
+            Kernel.Registry.Reset();
+
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( "Weapon", typeof(Sword) )
+            } );
+
+            /*
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( typeof(IWeapon), typeof(Sword) ),
+                new InjectorType( "SpecialPower", typeof(SheerTerror) ),
+                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
+            } );
+            */
+
+            /*
+            //dynamic myInstance = Instance.New( "Samurai", injector );
+            dynamic myInstance = Instance.New( typeof( Samurai ), injector );
+            //Debug.WriteLine( myInstance.UseSecretPower() );
+            //Debug.WriteLine( myInstance.SpecialPower.Use() );
+            string weapon_use = myInstance.Weapon.Use();
+            Debug.WriteLine( weapon_use );
+            */
+
+            // OR
+
+            Samurai mySamurai = Instance.New<Samurai>( injector );
+            //Debug.WriteLine( mySamurai.UseSecretPower() );
+            //Debug.WriteLine( mySamurai.SpecialPower.Use() );
+            Debug.WriteLine( mySamurai.Weapon.Use() );
+        }
+
+        [TestMethod]
+        public void New_on_instance_with_named_dynamic_field()
+        {
+            Kernel.Registry.Reset();
+
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
+            } );
+
+            Samurai mySamurai = Instance.New<Samurai>( injector );
+            Debug.WriteLine( mySamurai.UseSecretPower() );
+        }
+
+        [TestMethod]
+        public void New_on_instance_with_unnamed_dynamic_property()
+        {
+            Kernel.Registry.Reset();
+
+            Injector injector = new Injector( new InjectorRegistry(){
+                new InjectorType( "SpecialPower", typeof(TemporaryBlindness) )
+            } );
+
+            Samurai mySamurai = Instance.New<Samurai>( injector );
+            string specialPower_used = mySamurai.SpecialPower.Use();
+            Debug.WriteLine( specialPower_used );
         }
     }
 
@@ -143,7 +217,12 @@ namespace _unittests.org.ncore.ServicedApi
         [Inject]
         public dynamic SpecialPower { get; private set; }
         [Inject]
+        public IWeapon Weapon { get; set; }
+
+        /* What about:
+        [Inject(typeof(IWeapon))]
         public IWeapon Weapon { get; private set; }
+        */
 
         public Samurai()
         {

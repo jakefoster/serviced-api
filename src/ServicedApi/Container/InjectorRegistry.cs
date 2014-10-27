@@ -8,25 +8,25 @@ using System.Configuration;
 namespace org.ncore.ServicedApi.Container
 {
     // TODO: Should this be changed to a ConcurrentDictionary to ensure thread safety?  -JF
-    public class KernelRegistry : IDictionary<string, KernelType>
+    public class InjectorRegistry : IDictionary<string, InjectorType>
     {
-        private Dictionary<string, KernelType> _dictionary;
+        private Dictionary<string, InjectorType> _dictionary;
 
-        public void Add( KernelType value )
+        public void Add( InjectorType value )
         {
             _dictionary.Add( value.Name, value );
         }
 
-        public void Add( string name, KernelType value )
+        public void Add( string name, InjectorType value )
         {
-            if(name != value.Name)
+            if( name != value.Name )
             {
-                throw new ArgumentException( "The 'name' parameter must match the Name property on the supplied KernelType.", "name" );
+                throw new ArgumentException( "The 'name' parameter must match the Name property on the supplied InjectorType.", "name" );
             }
             _dictionary.Add( value.Name, value );
         }
 
-        public KernelRegistry()
+        public InjectorRegistry()
             : base()
         {
             this._initialize();
@@ -40,27 +40,13 @@ namespace org.ncore.ServicedApi.Container
 
         private void _initialize()
         {
-            lock(this)
+            lock( this )
             {
-                _dictionary = new Dictionary<string, KernelType>();
-
-                KernelConfiguration configuration = (KernelConfiguration)ConfigurationManager.GetSection( "kernel" );
-                foreach( TypeElement element in configuration.Types )
-                {
-                    KernelType entry = new KernelType()
-                    {
-                        Name = element.Name,
-                        Assembly = element.Assembly,
-                        TypeName = element.TypeName,
-                        AllowSave = element.AllowSave,
-                        Instance = null
-                    };
-                    this.Add( entry );
-                }
+                _dictionary = new Dictionary<string, InjectorType>();
             }
         }
 
-        #region IDictionary<string,KernelType> Members
+        #region IDictionary<string,InjectorType> Members
 
 
         public bool ContainsKey( string key )
@@ -78,17 +64,17 @@ namespace org.ncore.ServicedApi.Container
             return _dictionary.Remove( key );
         }
 
-        public bool TryGetValue( string key, out KernelType value )
+        public bool TryGetValue( string key, out InjectorType value )
         {
             return _dictionary.TryGetValue( key, out value );
         }
 
-        public ICollection<KernelType> Values
+        public ICollection<InjectorType> Values
         {
             get { return _dictionary.Values; }
         }
 
-        public KernelType this[ string key ]
+        public InjectorType this[ string key ]
         {
             get
             {
@@ -102,15 +88,15 @@ namespace org.ncore.ServicedApi.Container
 
         #endregion
 
-        #region ICollection<KeyValuePair<string,KernelType>> Members
+        #region ICollection<KeyValuePair<string,InjectorType>> Members
 
-        public void Add( KeyValuePair<string, KernelType> item )
+        public void Add( KeyValuePair<string, InjectorType> item )
         {
             if( item.Key != item.Value.Name )
             {
                 throw new ArgumentException( "The 'item.Key' parameter must match the Name property on the supplied RegistryEntry.", "item.Key" );
             }
-            ((ICollection<KeyValuePair<string,KernelType>>)_dictionary).Add( item );
+            ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).Add( item );
         }
 
         public void Clear()
@@ -118,14 +104,14 @@ namespace org.ncore.ServicedApi.Container
             _dictionary.Clear();
         }
 
-        public bool Contains( KeyValuePair<string, KernelType> item )
+        public bool Contains( KeyValuePair<string, InjectorType> item )
         {
             return _dictionary.Contains( item );
         }
 
-        public void CopyTo( KeyValuePair<string, KernelType>[] array, int arrayIndex )
+        public void CopyTo( KeyValuePair<string, InjectorType>[] array, int arrayIndex )
         {
-            ((ICollection<KeyValuePair<string,KernelType>>)_dictionary).CopyTo( array, arrayIndex );
+            ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).CopyTo( array, arrayIndex );
         }
 
         public int Count
@@ -135,19 +121,19 @@ namespace org.ncore.ServicedApi.Container
 
         public bool IsReadOnly
         {
-            get { return ( (ICollection<KeyValuePair<string, KernelType>>)_dictionary ).IsReadOnly; }
+            get { return ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).IsReadOnly; }
         }
 
-        public bool Remove( KeyValuePair<string, KernelType> item )
+        public bool Remove( KeyValuePair<string, InjectorType> item )
         {
-            return ( (ICollection<KeyValuePair<string, KernelType>>)_dictionary ).Remove( item );
+            return ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).Remove( item );
         }
 
         #endregion
 
-        #region IEnumerable<KeyValuePair<string,KernelType>> Members
+        #region IEnumerable<KeyValuePair<string,InjectorType>> Members
 
-        public IEnumerator<KeyValuePair<string, KernelType>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, InjectorType>> GetEnumerator()
         {
             return _dictionary.GetEnumerator();
         }
@@ -164,3 +150,4 @@ namespace org.ncore.ServicedApi.Container
         #endregion
     }
 }
+

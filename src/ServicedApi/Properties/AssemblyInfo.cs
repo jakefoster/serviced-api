@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle( "org.ncore.ServicedApi" )]
 [assembly: AssemblyDescription( "A library supporting the implementation of serviced APIs." )]
-[assembly: AssemblyConfiguration( "Release" )]
+[assembly: AssemblyConfiguration( "Debug" )]
 [assembly: AssemblyCompany( "Cleverbox Inc." )]
 [assembly: AssemblyProduct( "org.ncore.ServicedApi" )]
 [assembly: AssemblyCopyright( "Copyright © 2004-2014, Cleverbox Inc. - All rights reserved." )]

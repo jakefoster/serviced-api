@@ -32,7 +32,7 @@ namespace org.ncore.ServicedApi.Container
             //  from the registry.  If not, we just use the type you passed in.  -JF
             if( Kernel.Registry.Keys.Contains( type.FullName ) )
             {
-                RegistryEntry entry = Kernel.Registry[ type.FullName ];
+                KernelType entry = Kernel.Registry[ type.FullName ];
                 _type = Type.GetType( entry.TypeName + ", " + entry.Assembly );
             }
             else
@@ -45,7 +45,7 @@ namespace org.ncore.ServicedApi.Container
         {
             if( Kernel.Registry.Keys.Contains( name ) )
             {
-                RegistryEntry entry = Kernel.Registry[ name ];
+                KernelType entry = Kernel.Registry[ name ];
                 _type = Type.GetType( entry.TypeName + ", " + entry.Assembly );
             }
             else

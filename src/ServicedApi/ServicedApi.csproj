@@ -68,8 +68,10 @@
     <Compile Include="Container\InjectAttribute.cs" />
     <Compile Include="Container\Injector.cs" />
     <Compile Include="Container\Instance.cs" />
+    <Compile Include="Container\InjectorRegistry.cs" />
     <Compile Include="Container\KernelRegistry.cs" />
-    <Compile Include="Container\RegistryEntry.cs" />
+    <Compile Include="Container\InjectorType.cs" />
+    <Compile Include="Container\KernelType.cs" />
     <Compile Include="Container\Service.cs" />
     <Compile Include="ContextStorage.cs" />
     <Compile Include="Persistence\IDataContext.cs" />
