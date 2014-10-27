@@ -19,5 +19,10 @@ namespace org.ncore.ServicedApi.Container
         {
             Name = name;
         }
+
+        public InjectAttribute( Type type )
+        {
+            Name = type.FullName;
+        }
     }
 }

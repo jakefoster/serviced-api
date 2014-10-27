@@ -78,7 +78,7 @@ namespace _unittests.org.ncore.ServicedApi
             Kernel.Registry.Reset();
 
             Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( "Weapon", typeof(Sword) )
+                new InjectorType( "Weapon", typeof(Katana) )
             } );
 
             /*
@@ -109,38 +109,20 @@ namespace _unittests.org.ncore.ServicedApi
         [TestMethod]
         public void Works_Expository()
         {
-            //Kernel.Registry.Add( "Samurai", typeof( Samurai ) );
-            //Kernel.Registry.Add( typeof( Samurai ), typeof( Samurai ) );
-
-            Kernel.Registry.Reset();
+            Kernel.Registry.Add( new KernelType( typeof( Samurai ), typeof( Samurai ) ) );
 
             Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( "Weapon", typeof(Sword) )
-            } );
-
-            /*
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( typeof(IWeapon), typeof(Sword) ),
+                new InjectorType( typeof(IWeapon), typeof(Katana) ),
+                new InjectorType( "Weapon", new Naginata(2) ),
                 new InjectorType( "SpecialPower", typeof(SheerTerror) ),
                 new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
             } );
-            */
-
-            /*
-            //dynamic myInstance = Instance.New( "Samurai", injector );
-            dynamic myInstance = Instance.New( typeof( Samurai ), injector );
-            //Debug.WriteLine( myInstance.UseSecretPower() );
-            //Debug.WriteLine( myInstance.SpecialPower.Use() );
-            string weapon_use = myInstance.Weapon.Use();
-            Debug.WriteLine( weapon_use );
-            */
-
-            // OR
 
             Samurai mySamurai = Instance.New<Samurai>( injector );
-            //Debug.WriteLine( mySamurai.UseSecretPower() );
-            //Debug.WriteLine( mySamurai.SpecialPower.Use() );
-            Debug.WriteLine( mySamurai.Weapon.Use() );
+            Assert.AreEqual( "Argh! My eyes!", mySamurai.UseSecretPower() );
+            Assert.AreEqual( "Stop! You're scaring me!", mySamurai.SpecialPower.Use() );
+            Assert.AreEqual( "Stab! Stab!", mySamurai.Weapon.Use() );
+            Assert.AreEqual( "Slice!", mySamurai.AlternateWeapon.Use() );
         }
 
         [TestMethod]
@@ -153,7 +135,7 @@ namespace _unittests.org.ncore.ServicedApi
             } );
 
             Samurai mySamurai = Instance.New<Samurai>( injector );
-            Debug.WriteLine( mySamurai.UseSecretPower() );
+            Assert.AreEqual( "Argh! My eyes!", mySamurai.UseSecretPower() );
         }
 
         [TestMethod]
@@ -166,8 +148,7 @@ namespace _unittests.org.ncore.ServicedApi
             } );
 
             Samurai mySamurai = Instance.New<Samurai>( injector );
-            string specialPower_used = mySamurai.SpecialPower.Use();
-            Debug.WriteLine( specialPower_used );
+            Assert.AreEqual( "Argh! My eyes!", mySamurai.SpecialPower.Use() );
         }
     }
 
@@ -178,19 +159,62 @@ namespace _unittests.org.ncore.ServicedApi
         string Use();
     }
 
-    public class Sword : IWeapon
+    public class Nagimaka : IWeapon
     {
         public string Use()
         {
-            return "Slice!";
+            return "Big Slice!";
         }
     }
 
     public class Naginata : IWeapon
     {
+        public int StabCount { get; set; }
         public string Use()
         {
-            return "Stab!";
+            StringBuilder builder = new StringBuilder();
+            for( int i = 1; i <= StabCount; i++ )
+            {
+                builder.Append( "Stab!" );
+                if(i < StabCount)
+                {
+                    builder.Append( " " );
+                }
+            }
+            return builder.ToString();
+        }
+
+        public Naginata(int stabCount)
+        {
+            StabCount = stabCount;
+        }
+    }
+
+    public class Katana : IWeapon
+    {
+        public int StabCount { get; set; }
+        public string Use()
+        {
+            StringBuilder builder = new StringBuilder();
+            for( int i = 1; i <= StabCount; i++ )
+            {
+                builder.Append( "Slice!" );
+                if( i < StabCount )
+                {
+                    builder.Append( " " );
+                }
+            }
+            return builder.ToString();
+        }
+
+        public Katana()
+        {
+            StabCount = 1;
+        }
+
+        public Katana( int stabCount )
+        {
+            StabCount = stabCount;
         }
     }
 
@@ -218,11 +242,8 @@ namespace _unittests.org.ncore.ServicedApi
         public dynamic SpecialPower { get; private set; }
         [Inject]
         public IWeapon Weapon { get; set; }
-
-        /* What about:
-        [Inject(typeof(IWeapon))]
-        public IWeapon Weapon { get; private set; }
-        */
+        [Inject( typeof( IWeapon ) )]
+        public IWeapon AlternateWeapon { get; set; }
 
         public Samurai()
         {
