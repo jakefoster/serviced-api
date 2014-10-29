@@ -8,22 +8,33 @@ using System.Configuration;
 namespace org.ncore.ServicedApi.Container
 {
     // TODO: Should this be changed to a ConcurrentDictionary to ensure thread safety?  -JF
-    public class InjectorRegistry : IDictionary<string, InjectorType>
+    public class InjectorRegistry : IDictionary<string, object>
     {
-        private Dictionary<string, InjectorType> _dictionary;
+        private Dictionary<string, object> _dictionary;
 
+        // TODO: Not sure I like this approach at all.  -JF
         public void Add( InjectorType value )
         {
-            _dictionary.Add( value.Name, value );
+            _dictionary.Add( value.TypeName, value );
         }
 
-        public void Add( string name, InjectorType value )
+        public void Add( string key, object value )
         {
-            if( name != value.Name )
+            _dictionary.Add( key, value );
+        }
+
+        public void Add( object key, object value )
+        {
+            string derivedKey = string.Empty;
+            if( key is Type )
             {
-                throw new ArgumentException( "The 'name' parameter must match the Name property on the supplied InjectorType.", "name" );
+                derivedKey = ( (Type)key ).FullName;
             }
-            _dictionary.Add( value.Name, value );
+            else
+            {
+                derivedKey = key.ToString();
+            }
+            _dictionary.Add( derivedKey, value );
         }
 
         public InjectorRegistry()
@@ -42,11 +53,11 @@ namespace org.ncore.ServicedApi.Container
         {
             lock( this )
             {
-                _dictionary = new Dictionary<string, InjectorType>();
+                _dictionary = new Dictionary<string, object>();
             }
         }
 
-        #region IDictionary<string,InjectorType> Members
+        #region IDictionary<string,object> Members
 
 
         public bool ContainsKey( string key )
@@ -64,17 +75,17 @@ namespace org.ncore.ServicedApi.Container
             return _dictionary.Remove( key );
         }
 
-        public bool TryGetValue( string key, out InjectorType value )
+        public bool TryGetValue( string key, out object value )
         {
             return _dictionary.TryGetValue( key, out value );
         }
 
-        public ICollection<InjectorType> Values
+        public ICollection<object> Values
         {
             get { return _dictionary.Values; }
         }
 
-        public InjectorType this[ string key ]
+        public object this[ string key ]
         {
             get
             {
@@ -88,15 +99,11 @@ namespace org.ncore.ServicedApi.Container
 
         #endregion
 
-        #region ICollection<KeyValuePair<string,InjectorType>> Members
+        #region ICollection<KeyValuePair<string, object>> Members
 
-        public void Add( KeyValuePair<string, InjectorType> item )
+        public void Add( KeyValuePair<string, object> item )
         {
-            if( item.Key != item.Value.Name )
-            {
-                throw new ArgumentException( "The 'item.Key' parameter must match the Name property on the supplied RegistryEntry.", "item.Key" );
-            }
-            ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).Add( item );
+            ( (ICollection<KeyValuePair<string, object>>)_dictionary ).Add( item );
         }
 
         public void Clear()
@@ -104,14 +111,14 @@ namespace org.ncore.ServicedApi.Container
             _dictionary.Clear();
         }
 
-        public bool Contains( KeyValuePair<string, InjectorType> item )
+        public bool Contains( KeyValuePair<string, object> item )
         {
             return _dictionary.Contains( item );
         }
 
-        public void CopyTo( KeyValuePair<string, InjectorType>[] array, int arrayIndex )
+        public void CopyTo( KeyValuePair<string, object>[] array, int arrayIndex )
         {
-            ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).CopyTo( array, arrayIndex );
+            ( (ICollection<KeyValuePair<string, object>>)_dictionary ).CopyTo( array, arrayIndex );
         }
 
         public int Count
@@ -121,19 +128,19 @@ namespace org.ncore.ServicedApi.Container
 
         public bool IsReadOnly
         {
-            get { return ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).IsReadOnly; }
+            get { return ( (ICollection<KeyValuePair<string, object>>)_dictionary ).IsReadOnly; }
         }
 
-        public bool Remove( KeyValuePair<string, InjectorType> item )
+        public bool Remove( KeyValuePair<string, object> item )
         {
-            return ( (ICollection<KeyValuePair<string, InjectorType>>)_dictionary ).Remove( item );
+            return ( (ICollection<KeyValuePair<string, object>>)_dictionary ).Remove( item );
         }
 
         #endregion
 
-        #region IEnumerable<KeyValuePair<string,InjectorType>> Members
+        #region IEnumerable<KeyValuePair<string, object>> Members
 
-        public IEnumerator<KeyValuePair<string, InjectorType>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             return _dictionary.GetEnumerator();
         }

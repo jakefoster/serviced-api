@@ -8,67 +8,67 @@ namespace org.ncore.ServicedApi.Container
 {
     public class InjectorType
     {
-        public string Name { get; set; }
-        public string Assembly { get; set; }
-        public string TypeName { get; set; }
-        public object Instance { get; set; }
+        public static readonly object Null = new object();
 
-        public InjectorType(){}
-
-        public InjectorType( string name, Type type )
-        {
-            this.Name = name;
-            this.Assembly = type.Assembly.FullName;
-            this.TypeName = type.FullName;
-        }
-
-        public InjectorType( Type name, Type type )
-        {
-            this.Name = name.FullName;
-            this.Assembly = type.Assembly.FullName;
-            this.TypeName = type.FullName;
-        }
-
-        public InjectorType( object instance )
-        {
-            _validateInstance( instance );
-
-            Type type = instance.GetType();
-
-            this.Name = type.FullName;
-            this.Assembly = type.Assembly.FullName;
-            this.TypeName = type.FullName;
-            this.Instance = instance;
-        }
-
-        public InjectorType(string name, object instance)
-        {
-            _validateInstance( instance );
-
-            Type type = instance.GetType();
-
-            this.Name = name;
-            this.Assembly = type.Assembly.FullName;
-            this.TypeName = type.FullName;
-            this.Instance = instance;
-        }
-
-        public InjectorType( Type type, object instance )
-        {
-            _validateInstance( instance );
-
-            this.Name = type.FullName;
-            this.Assembly = type.Assembly.FullName;
-            this.TypeName = type.FullName;
-            this.Instance = instance;
-        }
-
-        private static void _validateInstance( object instance )
-        {
-            if( instance == null )
+        // NOTE: Non-obvious, but setting either .Assembly or .TypeName wipes out .Type
+        //  and conversely, setting .Type sets the underlying values _assembly and 
+        //  _typeName so that the class can never really be in an inconsistent state.  JF
+        private string _assembly;
+        public string Assembly 
+        { 
+            get
             {
-                throw new ArgumentException( "The 'instance' parameter cannot be null.", "instance" );
+                return _assembly;
             }
+
+            set
+            {
+                _assembly = value;
+                _type = null;
+            }
+        }
+
+        private string _typeName;
+        public string TypeName
+        {
+            get
+            {
+                return _typeName;
+            }
+
+            set
+            {
+                _typeName = value;
+                _type = null;
+            }
+        }
+
+        private Type _type;
+        public Type Type
+        {
+            get
+            {
+                return _type;
+            }
+
+            set
+            {
+                _type = value;
+                _assembly = _type.Assembly.FullName;
+                _typeName = _type.FullName;
+            }
+        }
+        
+        public InjectorType(){}
+        public InjectorType( Type type ) 
+        {
+            this.Type = type;
+        }
+
+        public InjectorType( string assembly, string typeName )
+        {
+            this.Assembly = assembly;
+            this.TypeName = typeName;
         }
     }
 }

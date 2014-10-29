@@ -64,110 +64,127 @@ namespace _unittests.org.ncore.ServicedApi
         #endregion
 
         [TestMethod]
-        public void Scratchpad()
-        {
-            // stuff goes here...
-        }
-
-        [TestMethod]
-        public void DiIsh()
-        {
-            //Kernel.Registry.Add( "Samurai", typeof( Samurai ) );
-            //Kernel.Registry.Add( typeof( Samurai ), typeof( Samurai ) );
-
-            Kernel.Registry.Reset();
-
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( "Weapon", typeof(Katana) )
-            } );
-
-            /*
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( typeof(IWeapon), typeof(Sword) ),
-                new InjectorType( "SpecialPower", typeof(SheerTerror) ),
-                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
-            } );
-            */
-
-            /*
-            //dynamic myInstance = Instance.New( "Samurai", injector );
-            dynamic myInstance = Instance.New( typeof( Samurai ), injector );
-            //Debug.WriteLine( myInstance.UseSecretPower() );
-            //Debug.WriteLine( myInstance.SpecialPower.Use() );
-            string weapon_use = myInstance.Weapon.Use();
-            Debug.WriteLine( weapon_use );
-            */
-
-            // OR
-
-            Samurai mySamurai = Instance.New<Samurai>( injector );
-            //Debug.WriteLine( mySamurai.UseSecretPower() );
-            //Debug.WriteLine( mySamurai.SpecialPower.Use() );
-            Debug.WriteLine( mySamurai.Weapon.Use() );
-        }
-
-        [TestMethod]
         public void Works_Expository()
         {
-            Kernel.Registry.Add( new KernelType( typeof( Samurai ), typeof( Samurai ) ) );
-
-            // TODO: So the real question is why bother forcing them to decorate the properties/fields
-            //  with the inject attribute?! Why not just let the caller specify what member names to set?!
-            //  This allows you to create classes that don't support or even know about the Inject attribute
-            //  making this whole thing WAY more useful.  Come to think of it, I wonder if there's a way
-            //  to call a non-default constructor and pass in a list of params using reflection?  -JF
-            // UPDATE: On further reflection, why even have the Inject attribute at all? What value is it
-            //  adding?  Aliasing of the name is the only thing I can think of and I really can't think of
-            //  use case for that. -JF
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( typeof(IWeapon), typeof(Katana) ),
-                new InjectorType( "Weapon", new Naginata(2) ),
-                new InjectorType( "SpecialPower", typeof(SheerTerror) ),
-                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
+            Kernel.Registry.Reset();
+            Kernel.Registry.Add( new KernelType( typeof( Fighter ), typeof( Samurai ) ) );
+            
+            Injector injector = new Injector( new InjectorRegistry{
+                { typeof(IThrowableWeapon), typeof(ThrowingStar) },
+                { "Weapon", new Naginata(2) },
+                { "AlternateWeapon", new Katana(){SliceCount = 3} },
+                { "_secretPower", typeof(SheerTerror) },
+                { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            Samurai mySamurai = Instance.New<Samurai>( injector );
-            Assert.AreEqual( "Argh! My eyes!", mySamurai.UseSecretPower() );
-            Assert.AreEqual( "Stop! You're scaring me!", mySamurai.SpecialPower.Use() );
-            Assert.AreEqual( "Stab! Stab!", mySamurai.Weapon.Use() );
-            Assert.AreEqual( "Slice!", mySamurai.AlternateWeapon.Use() );
+            // NOTE: Notice above that setting "_secretPower" doesn't pop. This is exactly
+            //  what we want.  It allows us to not know *everything* about the actual
+            //  type that gets created until runtime.  We know it's of type Fighter but
+            //  we don't know if it's a Ninja or a Samurai. If it IS a Ninja, then the
+            //  _secretPower field will be set and we can later conditionally call
+            //  a Ninja specific method to reveal the secret power (see below).  -JF
+
+            Fighter myFighter = Instance.New<Fighter>( injector );
+            Assert.AreEqual( typeof( Samurai ), myFighter.GetType() );
+            Assert.AreEqual( "Whizzz, Thud!", myFighter.ThrowableWeapon.Throw() );
+            Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
+            Assert.AreEqual( "Slice! Slice! Slice!", myFighter.AlternateWeapon.Use() );
+            if( myFighter is Ninja )
+            {
+                // NOTE: If you've got a secret power, use it!
+                Assert.AreEqual( "Stop! You're scaring me!", ((Ninja)myFighter).UseSecretPower() );
+            }
+            Assert.AreEqual( "Hey! Who turned out the lights!", myFighter.SpecialPower.Use() );
         }
 
         [TestMethod]
-        public void New_on_instance_with_named_dynamic_field()
+        public void Works_dynamic_expository()
         {
             Kernel.Registry.Reset();
+            //Kernel.Registry.Add( new KernelType( "Fighter", typeof( Samurai ) ) );
+            Kernel.Registry.Add( new KernelType( typeof( Fighter ), typeof( Samurai ) ) );
 
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( "SecretPower", typeof(TemporaryBlindness) )
+            Injector injector = new Injector( new InjectorRegistry{
+                { typeof(IThrowableWeapon), typeof(ThrowingStar) },
+                { "Weapon", new Naginata(2) },
+                { "AlternateWeapon", new Katana(){SliceCount = 3} },
+                { "_secretPower", typeof(SheerTerror) },
+                { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            Samurai mySamurai = Instance.New<Samurai>( injector );
-            Assert.AreEqual( "Argh! My eyes!", mySamurai.UseSecretPower() );
+            //dynamic myInstance = Instance.New( "Fighter", injector );
+            dynamic myFighter = Instance.New( typeof( Fighter ), injector );
+            Assert.AreEqual( typeof( Samurai ), myFighter.GetType() );
+            Assert.AreEqual( "Whizzz, Thud!", myFighter.ThrowableWeapon.Throw() );
+            Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
+            Assert.AreEqual( "Slice! Slice! Slice!", myFighter.AlternateWeapon.Use() );
+            if( myFighter is Ninja )
+            {
+                // NOTE: If you've got a secret power, use it!
+                Assert.AreEqual( "Stop! You're scaring me!", ( (Ninja)myFighter ).UseSecretPower() );
+            }
+            Assert.AreEqual( "Hey! Who turned out the lights!", myFighter.SpecialPower.Use() );
         }
 
         [TestMethod]
-        public void New_on_instance_with_unnamed_dynamic_property()
+        public void Works_Ninja_Expository()
+        {
+            Kernel.Registry.Reset();
+            Kernel.Registry.Add( new KernelType( typeof( Fighter ), typeof( Ninja ) ) );
+
+            Injector injector = new Injector( new InjectorRegistry{
+                { typeof(IThrowableWeapon), typeof(GlassDust) },
+                { "Weapon", new Naginata(2) },
+                { "AlternateWeapon", new Katana(){SliceCount = 3} },
+                { "_secretPower", typeof(SheerTerror) },
+                { "SpecialPower", typeof(TemporaryBlindness) }
+            } );
+
+            Fighter myFighter = Instance.New<Fighter>( injector );
+            Assert.AreEqual( typeof( Ninja ), myFighter.GetType() );
+            Assert.AreEqual( "Puff... Gah! My eyes!!", myFighter.ThrowableWeapon.Throw() );
+            Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
+            Assert.AreEqual( "Slice! Slice! Slice!", myFighter.AlternateWeapon.Use() );
+            Assert.AreEqual( "Stop! You're scaring me!", ((Ninja)myFighter).UseSecretPower() );
+            Assert.AreEqual( "Hey! Who turned out the lights!", myFighter.SpecialPower.Use() );
+        }
+
+        
+        [TestMethod]
+        public void New_on_instance_with_dynamic_field()
         {
             Kernel.Registry.Reset();
 
-            Injector injector = new Injector( new InjectorRegistry(){
-                new InjectorType( "SpecialPower", typeof(TemporaryBlindness) )
+            Injector injector = new Injector( new InjectorRegistry{
+                { "_secretPower", typeof(TemporaryBlindness) }
+            } );
+
+            Ninja myNinja = Instance.New<Ninja>( injector );
+            Assert.AreEqual( "Hey! Who turned out the lights!", myNinja.UseSecretPower() );
+        }
+
+        [TestMethod]
+        public void New_on_instance_with_dynamic_property()
+        {
+            Kernel.Registry.Reset();
+
+            Injector injector = new Injector( new InjectorRegistry{
+                { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
             Samurai mySamurai = Instance.New<Samurai>( injector );
-            Assert.AreEqual( "Argh! My eyes!", mySamurai.SpecialPower.Use() );
+            Assert.AreEqual( "Hey! Who turned out the lights!", mySamurai.SpecialPower.Use() );
         }
     }
 
 
     /* Injection play */
-    public interface IWeapon
+    public interface IBladedWeapon
     {
         string Use();
     }
 
-    public class Nagimaka : IWeapon
+    public class Nagimaka : IBladedWeapon
     {
         public string Use()
         {
@@ -175,7 +192,7 @@ namespace _unittests.org.ncore.ServicedApi
         }
     }
 
-    public class Naginata : IWeapon
+    public class Naginata : IBladedWeapon
     {
         public int StabCount { get; set; }
         public string Use()
@@ -192,22 +209,26 @@ namespace _unittests.org.ncore.ServicedApi
             return builder.ToString();
         }
 
+        public Naginata()
+        {
+        }
+
         public Naginata(int stabCount)
         {
             StabCount = stabCount;
         }
     }
 
-    public class Katana : IWeapon
+    public class Katana : IBladedWeapon
     {
-        public int StabCount { get; set; }
+        public int SliceCount { get; set; }
         public string Use()
         {
             StringBuilder builder = new StringBuilder();
-            for( int i = 1; i <= StabCount; i++ )
+            for( int i = 1; i <= SliceCount; i++ )
             {
                 builder.Append( "Slice!" );
-                if( i < StabCount )
+                if( i < SliceCount )
                 {
                     builder.Append( " " );
                 }
@@ -217,12 +238,33 @@ namespace _unittests.org.ncore.ServicedApi
 
         public Katana()
         {
-            StabCount = 1;
+            SliceCount = 1;
         }
 
         public Katana( int stabCount )
         {
-            StabCount = stabCount;
+            SliceCount = stabCount;
+        }
+    }
+
+    public interface IThrowableWeapon
+    {
+        string Throw();
+    }
+
+    public class ThrowingStar : IThrowableWeapon
+    { 
+        public string Throw()
+        {
+            return "Whizzz, Thud!";
+        }
+    }
+
+    public class GlassDust : IThrowableWeapon
+    {
+        public string Throw()
+        {
+            return "Puff... Gah! My eyes!!";
         }
     }
 
@@ -230,7 +272,7 @@ namespace _unittests.org.ncore.ServicedApi
     {
         public string Use()
         {
-            return "Argh! My eyes!";
+            return "Hey! Who turned out the lights!";
         }
     }
 
@@ -242,16 +284,27 @@ namespace _unittests.org.ncore.ServicedApi
         }
     }
 
-    public class Samurai : FedualWarrior
+    #pragma warning disable 649 // Field '_unittests.org.ncore.ServicedApi.Ninja._secretPower' is never assigned to, and will always have its default value null
+    public class Ninja : Fighter
     {
-        [Inject( "SecretPower" )]
         private dynamic _secretPower;
-        [Inject]
+
+        public string UseSecretPower()
+        {
+            return _secretPower.Use();
+        }
+    }
+    #pragma warning restore 649
+
+    public class Samurai : Fighter
+    {
+        /*
+        private dynamic _secretPower;
+
         public dynamic SpecialPower { get; private set; }
-        [Inject]
-        public IWeapon Weapon { get; set; }
-        [Inject( typeof( IWeapon ) )]
-        public IWeapon AlternateWeapon { get; set; }
+        public IBladedWeapon Weapon { get; set; }
+        public IBladedWeapon AlternateWeapon { get; set; }
+        public IThrowableWeapon ThrowableWeapon { get; set; }
 
         public Samurai()
         {
@@ -262,29 +315,20 @@ namespace _unittests.org.ncore.ServicedApi
         {
             return _secretPower.Use();
         }
+         */
     }
 
-    public class FedualWarrior
+    public class Fighter
     {
-        /*
-        [Inject( "SecretPower" )]
-        private dynamic _secretPower;
-        [Inject]
+
         public dynamic SpecialPower { get; private set; }
-        [Inject]
-        public IWeapon Weapon { get; set; }
-        [Inject( typeof( IWeapon ) )]
-        public IWeapon AlternateWeapon { get; set; }
+        public IBladedWeapon Weapon { get; set; }
+        public IBladedWeapon AlternateWeapon { get; set; }
+        public IThrowableWeapon ThrowableWeapon { get; set; }
 
-        public FedualWarrior()
+        public Fighter()
         {
 
         }
-
-        public string UseSecretPower()
-        {
-            return _secretPower.Use();
-        }
-        */
     }
 }
