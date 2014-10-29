@@ -105,15 +105,24 @@ namespace org.ncore.ServicedApi.Container
 
                         if(injectable != null)
                         {
-                            property.SetValue( instance, injectable );
-                            Debug.WriteLine( "---> Set value!" );
+                            if( property.GetSetMethod(true) != null)
+                            {
+                                property.SetValue( instance, injectable );
+                                Debug.WriteLine( "---> Set value!" );
+                            }
+                            else
+                            {
+                                PropertyInfo baseProperty = _getPropertyFromBase( instance.GetType().BaseType, property.Name );
+                                baseProperty.SetValue( instance, injectable );
+                                Debug.WriteLine( "---> Set value!" );
+                            }
                         }
                     }
                 }
             }
 
-            FieldInfo[] fields = instance.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
-
+            FieldInfo[] fields = _getFields( instance.GetType() );
+            
             foreach( FieldInfo field in fields )
             {
                 Debug.WriteLine( "Field: " + field.Name );
@@ -153,6 +162,37 @@ namespace org.ncore.ServicedApi.Container
                     }
                 }
             }
+        }
+
+        private static FieldInfo[] _getFields( Type type )
+        {
+            FieldInfo[] fields = type.GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
+            if( type.BaseType != typeof( System.Object ) )
+            {
+                FieldInfo[] baseFields = _getFields( type.BaseType );
+                if( baseFields != null )
+                {
+                    fields = fields.Concat( baseFields ).ToArray();
+                }
+            }
+            return fields;
+        }
+
+        private static PropertyInfo _getPropertyFromBase( Type baseType, string propertyName )
+        {
+            PropertyInfo property = baseType.GetProperty( propertyName );
+            if( property == null )
+            {
+                if( baseType == typeof( System.Object ) )
+                {
+                    return null;
+                }
+                else
+                {
+                    property = _getPropertyFromBase( baseType.BaseType, propertyName );
+                }
+            }
+            return property;
         }
     }
 }

@@ -111,6 +111,14 @@ namespace _unittests.org.ncore.ServicedApi
         {
             Kernel.Registry.Add( new KernelType( typeof( Samurai ), typeof( Samurai ) ) );
 
+            // TODO: So the real question is why bother forcing them to decorate the properties/fields
+            //  with the inject attribute?! Why not just let the caller specify what member names to set?!
+            //  This allows you to create classes that don't support or even know about the Inject attribute
+            //  making this whole thing WAY more useful.  Come to think of it, I wonder if there's a way
+            //  to call a non-default constructor and pass in a list of params using reflection?  -JF
+            // UPDATE: On further reflection, why even have the Inject attribute at all? What value is it
+            //  adding?  Aliasing of the name is the only thing I can think of and I really can't think of
+            //  use case for that. -JF
             Injector injector = new Injector( new InjectorRegistry(){
                 new InjectorType( typeof(IWeapon), typeof(Katana) ),
                 new InjectorType( "Weapon", new Naginata(2) ),
@@ -234,7 +242,7 @@ namespace _unittests.org.ncore.ServicedApi
         }
     }
 
-    public class Samurai
+    public class Samurai : FedualWarrior
     {
         [Inject( "SecretPower" )]
         private dynamic _secretPower;
@@ -254,5 +262,29 @@ namespace _unittests.org.ncore.ServicedApi
         {
             return _secretPower.Use();
         }
+    }
+
+    public class FedualWarrior
+    {
+        /*
+        [Inject( "SecretPower" )]
+        private dynamic _secretPower;
+        [Inject]
+        public dynamic SpecialPower { get; private set; }
+        [Inject]
+        public IWeapon Weapon { get; set; }
+        [Inject( typeof( IWeapon ) )]
+        public IWeapon AlternateWeapon { get; set; }
+
+        public FedualWarrior()
+        {
+
+        }
+
+        public string UseSecretPower()
+        {
+            return _secretPower.Use();
+        }
+        */
     }
 }
