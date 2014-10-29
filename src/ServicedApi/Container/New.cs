@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace org.ncore.ServicedApi.Container
 {
-    public class Instance
+    public static class New
     {
-        public static dynamic New( Type type, Injector injector )
+        public static dynamic Instance( Type type, Injector injector )
         {
             dynamic instance;
             if( Kernel.Registry.Keys.Contains( type.FullName ) )
@@ -22,12 +22,12 @@ namespace org.ncore.ServicedApi.Container
                 instance = (dynamic)Activator.CreateInstance( type );
             }
 
-            
+
             injector.Inject( instance );
             return instance;
         }
 
-        public static dynamic New( string name, Injector injector )
+        public static dynamic Instance( string name, Injector injector )
         {
             dynamic instance;
             if( Kernel.Registry.Keys.Contains( name ) )
@@ -43,23 +43,23 @@ namespace org.ncore.ServicedApi.Container
             return instance;
         }
 
-        public static T New<T>( Injector injector )
+        public static T Instance<T>( Injector injector )
         {
             T instance;
-            if( Kernel.Registry.Keys.Contains( typeof(T).FullName ) )
+            if( Kernel.Registry.Keys.Contains( typeof( T ).FullName ) )
             {
                 instance = Kernel.CreateObject<T>();
             }
             else
             {
-                instance = (dynamic)Activator.CreateInstance( typeof(T) );
+                instance = (dynamic)Activator.CreateInstance( typeof( T ) );
             }
 
             injector.Inject( instance );
             return instance;
         }
 
-        public static T New<T>( string name, Injector injector )
+        public static T Instance<T>( string name, Injector injector )
         {
             T instance;
             if( Kernel.Registry.Keys.Contains( name ) )
@@ -75,5 +75,14 @@ namespace org.ncore.ServicedApi.Container
             return instance;
         }
 
+        public static Service Service( Type type )
+        {
+            return new Service( type );
+        }
+
+        public static Service Service( string name )
+        {
+            return new Service( name );
+        }
     }
 }

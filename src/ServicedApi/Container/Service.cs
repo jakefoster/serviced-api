@@ -13,16 +13,6 @@ namespace org.ncore.ServicedApi.Container
     {
         private Type _type;
 
-        public static Service New( Type type )
-        {
-            return new Service( type );
-        }
-
-        public static Service New( string name )
-        {
-            return new Service( name );
-        }
-
         public Service( Type type )
         {
             // NOTE: Non-obvious behavior here, but basically we're harmonizing

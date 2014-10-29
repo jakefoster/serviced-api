@@ -77,14 +77,7 @@ namespace _unittests.org.ncore.ServicedApi
                 { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            // NOTE: Notice above that setting "_secretPower" doesn't pop. This is exactly
-            //  what we want.  It allows us to not know *everything* about the actual
-            //  type that gets created until runtime.  We know it's of type Fighter but
-            //  we don't know if it's a Ninja or a Samurai. If it IS a Ninja, then the
-            //  _secretPower field will be set and we can later conditionally call
-            //  a Ninja specific method to reveal the secret power (see below).  -JF
-
-            Fighter myFighter = Instance.New<Fighter>( injector );
+            Fighter myFighter = New.Instance<Fighter>( injector );
             Assert.AreEqual( typeof( Samurai ), myFighter.GetType() );
             Assert.AreEqual( "Whizzz, Thud!", myFighter.ThrowableWeapon.Throw() );
             Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
@@ -112,8 +105,8 @@ namespace _unittests.org.ncore.ServicedApi
                 { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            //dynamic myInstance = Instance.New( "Fighter", injector );
-            dynamic myFighter = Instance.New( typeof( Fighter ), injector );
+            //dynamic myInstance = New.Instance( "Fighter", injector );
+            dynamic myFighter = New.Instance( typeof( Fighter ), injector );
             Assert.AreEqual( typeof( Samurai ), myFighter.GetType() );
             Assert.AreEqual( "Whizzz, Thud!", myFighter.ThrowableWeapon.Throw() );
             Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
@@ -140,7 +133,7 @@ namespace _unittests.org.ncore.ServicedApi
                 { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            Fighter myFighter = Instance.New<Fighter>( injector );
+            Fighter myFighter = New.Instance<Fighter>( injector );
             Assert.AreEqual( typeof( Ninja ), myFighter.GetType() );
             Assert.AreEqual( "Puff... Gah! My eyes!!", myFighter.ThrowableWeapon.Throw() );
             Assert.AreEqual( "Stab! Stab!", myFighter.Weapon.Use() );
@@ -159,7 +152,7 @@ namespace _unittests.org.ncore.ServicedApi
                 { "_secretPower", typeof(TemporaryBlindness) }
             } );
 
-            Ninja myNinja = Instance.New<Ninja>( injector );
+            Ninja myNinja = New.Instance<Ninja>( injector );
             Assert.AreEqual( "Hey! Who turned out the lights!", myNinja.UseSecretPower() );
         }
 
@@ -172,7 +165,7 @@ namespace _unittests.org.ncore.ServicedApi
                 { "SpecialPower", typeof(TemporaryBlindness) }
             } );
 
-            Samurai mySamurai = Instance.New<Samurai>( injector );
+            Samurai mySamurai = New.Instance<Samurai>( injector );
             Assert.AreEqual( "Hey! Who turned out the lights!", mySamurai.SpecialPower.Use() );
         }
     }

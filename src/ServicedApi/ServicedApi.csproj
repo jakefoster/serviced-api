@@ -72,8 +72,8 @@
     <Compile Include="Container\Instance.cs" />
     <Compile Include="Container\InjectorRegistry.cs" />
     <Compile Include="Container\KernelRegistry.cs" />
-    <Compile Include="Container\InjectorTypeOld.cs" />
     <Compile Include="Container\KernelType.cs" />
+    <Compile Include="Container\New.cs" />
     <Compile Include="Container\Service.cs" />
     <Compile Include="ContextStorage.cs" />
     <Compile Include="Persistence\IDataContext.cs" />
