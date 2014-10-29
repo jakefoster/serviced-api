@@ -12,9 +12,9 @@
     <Major>01</Major>
     <Minor>00</Minor>
     <Patch>01</Patch>
-    <Build>200</Build>
-    <Printable>1.0.1.200</Printable>
-    <Sortable>01.00.01.00200</Sortable>
+    <Build>202</Build>
+    <Printable>1.0.1.202</Printable>
+    <Sortable>01.00.01.00202</Sortable>
   </Version>
   <Configuration>
     <Label>Beta</Label>
@@ -22,9 +22,9 @@
   </Configuration>
   <Build>
     <Label>Release</Label>
-    <BuildDateTimeUtc>2014-10-29T04:02:59Z</BuildDateTimeUtc>
-    <BuildDateTimeLocal>2014-10-28T21:02:59-07:00</BuildDateTimeLocal>
-    <ShortName>org.ncore.ServicedApi 1.0.1.200 (Release) «Debug»</ShortName>
-    <FriendlyName>org.ncore.ServicedApi, version 1.0.1.200, '2014 R1' (Beta, Release) «Debug»</FriendlyName>
+    <BuildDateTimeUtc>2014-10-29T04:57:08Z</BuildDateTimeUtc>
+    <BuildDateTimeLocal>2014-10-28T21:57:08-07:00</BuildDateTimeLocal>
+    <ShortName>org.ncore.ServicedApi 1.0.1.202 (Release) «Debug»</ShortName>
+    <FriendlyName>org.ncore.ServicedApi, version 1.0.1.202, '2014 R1' (Beta, Release) «Debug»</FriendlyName>
   </Build>
 </Application>
