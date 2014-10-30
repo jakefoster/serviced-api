@@ -64,6 +64,22 @@ namespace _unittests.org.ncore.ServicedApi
         #endregion
 
         [TestMethod]
+        public void Scratchpad()
+        {
+            Debug.WriteLine( "F" );
+
+            Kernel.Registry.Add( new KernelType( typeof( Foo ), typeof( Foo ) ) );
+
+            Foo foo = New.Instance<Foo>(
+                new Injector( new InjectorRegistry { {"SomethingElse", "I got injected!"} } ),
+                new object[] { new Bar() { What = "Yeow" }, 2, "For sure!!", "damn" } );
+
+            Foo foo2 = Kernel.CreateObject<Foo>( new object[] { new Bar() { What = "Yeow" }, 3, "For sure!!", "damn" } );
+
+            Debug.WriteLine( foo2.Count );
+        }
+
+        [TestMethod]
         public void Works_Expository()
         {
             Kernel.Registry.Reset();
@@ -322,6 +338,40 @@ namespace _unittests.org.ncore.ServicedApi
         public Fighter()
         {
 
+        }
+    }
+
+    public class Bar
+    {
+        public string What { get; set; }
+        public Bar()
+        {
+
+        }
+    }
+
+    public class Foo
+    {
+        public Bar TheBar { get; set; }
+        public int Count { get; set; }
+        public string Something { get; set; }
+        public string SomethingElse { get; set; }
+        
+        public Foo(){}
+
+        public Foo( Bar theBar, int count, string something )
+        {
+            TheBar = theBar;
+            Count = count;
+            Something = something;
+        }
+
+        public Foo( Bar theBar, int count, string something, string somethingElse )
+        {
+            TheBar = theBar;
+            Count = count;
+            Something = something;
+            SomethingElse = somethingElse;
         }
     }
 }

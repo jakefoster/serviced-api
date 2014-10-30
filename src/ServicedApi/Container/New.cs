@@ -10,68 +10,79 @@ namespace org.ncore.ServicedApi.Container
 {
     public static class New
     {
-        public static dynamic Instance( Type type, Injector injector )
+        public static dynamic Instance( Type type, Injector injector, object[] ctorParams = null )
         {
             dynamic instance;
             if( Kernel.Registry.Keys.Contains( type.FullName ) )
             {
-                instance = Kernel.CreateObject<dynamic>( type.FullName );
+                instance = Kernel.CreateObject<dynamic>( type.FullName, ctorParams );
             }
             else
             {
-                instance = (dynamic)Activator.CreateInstance( type );
+                instance = (dynamic)Activator.CreateInstance( type, ctorParams );
             }
 
-
-            injector.Inject( instance );
+            if(injector != null)
+            {
+                injector.Inject( instance );
+            }
             return instance;
         }
 
-        public static dynamic Instance( string name, Injector injector )
+        public static dynamic Instance( string name, Injector injector, object[] ctorParams = null )
         {
             dynamic instance;
             if( Kernel.Registry.Keys.Contains( name ) )
             {
-                instance = Kernel.CreateObject<dynamic>( name );
+                instance = Kernel.CreateObject<dynamic>( name, ctorParams );
             }
             else
             {
                 throw new ApplicationException( "The specified name does not refer to a Type object in the Registry." );
             }
 
-            injector.Inject( instance );
+            if( injector != null )
+            {
+                injector.Inject( instance );
+            }
             return instance;
         }
 
-        public static T Instance<T>( Injector injector )
+        public static T Instance<T>( Injector injector, object[] ctorParams = null )
         {
             T instance;
             if( Kernel.Registry.Keys.Contains( typeof( T ).FullName ) )
             {
-                instance = Kernel.CreateObject<T>();
+                instance = Kernel.CreateObject<T>( ctorParams );
             }
             else
             {
-                instance = (dynamic)Activator.CreateInstance( typeof( T ) );
+                instance = (dynamic)Activator.CreateInstance( typeof( T ), ctorParams );
             }
 
-            injector.Inject( instance );
+            if( injector != null )
+            {
+                injector.Inject( instance );
+            }
             return instance;
         }
 
-        public static T Instance<T>( string name, Injector injector )
+        public static T Instance<T>( string name, Injector injector, object[] ctorParams = null )
         {
             T instance;
             if( Kernel.Registry.Keys.Contains( name ) )
             {
-                instance = Kernel.CreateObject<dynamic>( name );
+                instance = Kernel.CreateObject<dynamic>( name, ctorParams );
             }
             else
             {
                 throw new ApplicationException( "The specified name does not refer to a Type object in the Registry." );
             }
 
-            injector.Inject( instance );
+            if( injector != null )
+            {
+                injector.Inject( instance );
+            }
             return instance;
         }
 

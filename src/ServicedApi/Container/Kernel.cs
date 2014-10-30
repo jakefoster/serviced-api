@@ -14,29 +14,30 @@ namespace org.ncore.ServicedApi.Container
         [ThreadStatic]
         public static KernelRegistry Registry = new KernelRegistry();
 
-        public static T CreateObject<T>()
+        public static T CreateObject<T>( object[] ctorParams = null )
         {
             string name = typeof( T ).ToString();
-            return CreateObject<T>( name, false );
+            return CreateObject<T>( name, false, ctorParams );
         }
 
-        public static T CreateObject<T>( bool saveInRegistry )
+        public static T CreateObject<T>( bool saveInRegistry, object[] ctorParams = null )
         {
             string name = typeof( T ).ToString();
-            return CreateObject<T>( name, saveInRegistry );
+            return CreateObject<T>( name, saveInRegistry, ctorParams );
         }
 
-        public static T CreateObject<T>( string name )
+        public static T CreateObject<T>( string name, object[] ctorParams = null )
         {
-            return CreateObject<T>( name, false );
+            return CreateObject<T>( name, false, ctorParams );
         }
 
-        public static T CreateObject<T>( string name, bool saveInRegistry )
+        public static T CreateObject<T>( string name, bool saveInRegistry, object[] ctorParams = null )
         {
             KernelType kernelType = Registry[ name ];
-            ObjectHandle handle = Activator.CreateInstance( kernelType.Assembly, kernelType.TypeName );
+            ObjectHandle handle = Activator.CreateInstance( kernelType.Assembly, kernelType.TypeName, 
+                                                            false, 0, null, ctorParams, null, null );
             Object target = (T)handle.Unwrap();
-            // TODO: Configure params?  JF
+            // TODO: Use Injector to configure?  -JF
             if( saveInRegistry )
             {
                 if( !kernelType.AllowSave )
@@ -70,6 +71,10 @@ namespace org.ncore.ServicedApi.Container
             return (T)target.Instance;
         }
 
+
+        // TODO: I really want to remove these. I don't like that there's ambiguity.
+        //  That said, the generator makes heavy use of GetOrCreate and I need to understand
+        //  the implications.  -JF
         public static T GetOrCreateObject<T>()
         {
             string name = typeof( T ).ToString();
