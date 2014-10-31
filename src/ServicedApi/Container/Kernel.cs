@@ -73,8 +73,8 @@ namespace org.ncore.ServicedApi.Container
 
 
         // TODO: I really want to remove these. I don't like that there's ambiguity.
-        //  That said, the generator makes heavy use of GetOrCreate and I need to understand
-        //  the implications.  -JF
+        //  That said, the ServicedAPI generator makes heavy use of GetOrCreate and 
+        //  I need to understand the implications.  -JF
         public static T GetOrCreateObject<T>()
         {
             string name = typeof( T ).ToString();
