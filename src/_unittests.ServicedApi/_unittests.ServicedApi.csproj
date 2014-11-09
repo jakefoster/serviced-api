@@ -50,13 +50,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Container\InjectorTests.cs" />
-    <Compile Include="Container\ISampleInterfaceA.cs" />
-    <Compile Include="Container\KernelTests.cs" />
-    <Compile Include="Container\SampleClassA.cs" />
-    <Compile Include="Container\SampleClassB.cs" />
-    <Compile Include="Container\SampleClassC.cs" />
-    <Compile Include="Container\ServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Worknotes.cs" />
   </ItemGroup>

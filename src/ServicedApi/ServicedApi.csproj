@@ -65,22 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Container\InjectAttribute.cs" />
-    <Compile Include="Container\Injector.cs" />
-    <Compile Include="Container\InjectorLiteral.cs" />
-    <Compile Include="Container\InjectorType.cs" />
-    <Compile Include="Container\InjectorRegistry.cs" />
-    <Compile Include="Container\KernelRegistry.cs" />
-    <Compile Include="Container\KernelType.cs" />
-    <Compile Include="Container\New.cs" />
-    <Compile Include="Container\Service.cs" />
     <Compile Include="ContextStorage.cs" />
     <Compile Include="Persistence\IDataContext.cs" />
     <Compile Include="Persistence\IDataSilo.cs" />
     <Compile Include="ServiceContext.cs" />
     <Compile Include="Exceptions\DataValidationCondition.cs" />
-    <Compile Include="Container\Kernel.cs" />
-    <Compile Include="Container\KernelConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\RuleViolation.cs" />
     <Compile Include="Exceptions\RuntimeCondition.cs" />

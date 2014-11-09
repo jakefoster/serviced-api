@@ -10,11 +10,11 @@
   <Version>
     <Label>2014 R1</Label>
     <Major>01</Major>
-    <Minor>00</Minor>
-    <Patch>01</Patch>
-    <Build>202</Build>
-    <Printable>1.0.1.202</Printable>
-    <Sortable>01.00.01.00202</Sortable>
+    <Minor>01</Minor>
+    <Patch>00</Patch>
+    <Build>203</Build>
+    <Printable>1.1.0.203</Printable>
+    <Sortable>01.01.00.00203</Sortable>
   </Version>
   <Configuration>
     <Label>Beta</Label>
@@ -22,9 +22,9 @@
   </Configuration>
   <Build>
     <Label>Release</Label>
-    <BuildDateTimeUtc>2014-10-29T04:57:08Z</BuildDateTimeUtc>
-    <BuildDateTimeLocal>2014-10-28T21:57:08-07:00</BuildDateTimeLocal>
-    <ShortName>org.ncore.ServicedApi 1.0.1.202 (Release) «Debug»</ShortName>
-    <FriendlyName>org.ncore.ServicedApi, version 1.0.1.202, '2014 R1' (Beta, Release) «Debug»</FriendlyName>
+    <BuildDateTimeUtc>2014-11-09T21:27:33Z</BuildDateTimeUtc>
+    <BuildDateTimeLocal>2014-11-09T13:27:33-08:00</BuildDateTimeLocal>
+    <ShortName>org.ncore.ServicedApi 1.1.0.203 (Release) «Debug»</ShortName>
+    <FriendlyName>org.ncore.ServicedApi, version 1.1.0.203, '2014 R1' (Beta, Release) «Debug»</FriendlyName>
   </Build>
 </Application>

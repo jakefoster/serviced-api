@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/jakefoster/serviced-api</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Updated to target .NET 4.5.2 and moved to Github from Codeplex.</releaseNotes>
+    <releaseNotes>Removed all IoC support (/container/) and replaced it with org.ncore.Ioc (ncore-ioc on NuGet).</releaseNotes>
     <copyright>Copyright 2004-2014, Cleverbox Inc. - All rights reserved.</copyright>
     <tags>servicedapi service services soa framework scaffolding</tags>
     <dependencies>
